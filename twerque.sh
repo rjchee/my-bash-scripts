@@ -50,7 +50,7 @@ twerque () {
     esac
   fi
   # set IFS to empty so it doesn't strip out whitespace
-  IFS=''
+  local IFS=''
   while read line
   do
     for (( i=0; i<${#line}; i++ ))
