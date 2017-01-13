@@ -23,7 +23,7 @@ lookupwifi () {
         # command substitution $(iwgetid -r), so assign it in a different line
         # from the declaration
         local ssid
-        ssid=$(iwgetid -r)
+        local ssid=$(iwgetid -r)
         # if iwgetid -r failed, there is no connection to a WIFI network
         if [ $? -eq 0 ]
         then

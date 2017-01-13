@@ -53,6 +53,7 @@ twerque () {
   local IFS=''
   while read line
   do
+    local i
     for (( i=0; i<${#line}; i++ ))
     do
       case $style in
