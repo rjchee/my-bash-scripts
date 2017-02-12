@@ -43,6 +43,14 @@ twerque () {
       -s | --space)
         style=space
         ;;
+      -t | --thanks)
+        echo Thanks for letting me know | twerque
+        return $?
+        ;;
+      -h | --help)
+        echo "usage: twerque [[-b --box] [-s --space] [-t --thanks] [-h --help]]"
+        return 0
+        ;;
       *)
         (>&2 echo "invalid flag $1")
         return 1
@@ -80,3 +88,13 @@ twerque () {
     done
   done
 }
+
+_twerque () {
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  if [ $COMP_CWORD -eq 1 ]
+  then
+    COMPREPLY=( $(compgen -W "-b --box -s --space -t --thanks -h --help" -- $cur) )
+  fi
+}
+
+complete -o filenames -F _twerque twerque
