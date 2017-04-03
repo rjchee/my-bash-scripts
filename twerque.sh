@@ -40,6 +40,9 @@ twerque () {
       -b | --box)
         style=box
         ;;
+      -c | --clap)
+        style=clap
+        ;;
       -s | --space)
         style=space
         ;;
@@ -77,6 +80,22 @@ twerque () {
           # echo the rotated string without spaces between
           echo "${line:$i}""${line:0:$i}"
           ;;
+        clap)
+          local char=${line:$i:1}
+          if [ $i -eq $((${#line} - 1)) ]
+          then
+            echo "$char 👏"
+          else
+            case $char in
+              [[:space:]])
+                printf "%c\U0001F44F%c" "$char" "$char"
+                ;;
+              *)
+                printf "%c" "$char"
+                ;;
+            esac
+          fi
+          ;;
         space)
           local whitespace=' '
           if [ $i -eq $((${#line} - 1)) ]
@@ -93,7 +112,7 @@ _twerque () {
   local cur=${COMP_WORDS[COMP_CWORD]}
   if [ $COMP_CWORD -eq 1 ]
   then
-    COMPREPLY=( $(compgen -W "-b --box -s --space -t --thanks -h --help" -- $cur) )
+    COMPREPLY=( $(compgen -W "-b --box -c --clap -s --space -t --thanks -h --help" -- $cur) )
   fi
 }
 
