@@ -11,7 +11,7 @@ lookupwifi () {
     then
         if [ -e "$CONNECTIONS_DIR/$1" ]
         then
-            _lookupwifi $1
+            _lookupwifi "$1"
             # $? is the error code returned by the previous function
             return $?
         else
@@ -27,7 +27,7 @@ lookupwifi () {
         # if iwgetid -r failed, there is no connection to a WIFI network
         if [ $? -eq 0 ]
         then
-            _lookupwifi $ssid
+            _lookupwifi "$ssid"
             return $?
         else
             echo Not connected to WIFI. Please specify a network to look up.
@@ -40,6 +40,7 @@ lookupwifi () {
 _lookupwifi () {
     local CONNECTIONS_DIR=/etc/NetworkManager/system-connections
     local pass
+    echo $1
     pass=$(set -o pipefail && sudo cat "$CONNECTIONS_DIR/$1" | ag "psk=" | cut -d'=' -f2)
     if [ $? -eq 0 ]
     then
