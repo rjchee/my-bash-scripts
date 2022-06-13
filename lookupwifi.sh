@@ -9,7 +9,7 @@ lookupwifi () {
     # check for an argument and act accordingly
     if [ -n "$1" ]
     then
-        if [ -e "$CONNECTIONS_DIR/$1" ]
+        if [ -e "$CONNECTIONS_DIR/$1.nmconnection" ]
         then
             _lookupwifi "$1"
             # $? is the error code returned by the previous function
@@ -41,7 +41,7 @@ _lookupwifi () {
     local CONNECTIONS_DIR=/etc/NetworkManager/system-connections
     local pass
     echo $1
-    pass=$(set -o pipefail && sudo cat "$CONNECTIONS_DIR/$1" | ag "psk=" | cut -d'=' -f2)
+    pass=$(set -o pipefail && sudo cat "$CONNECTIONS_DIR/$1.nmconnection" | ag "psk=" | cut -d'=' -f2)
     if [ $? -eq 0 ]
     then
         echo $pass
@@ -53,9 +53,19 @@ _lookupwifi () {
 
 _lookupwificompletion () {
     # set autocompletion for existing networks in the system-connections file
-    local CONNECTIONS_DIR=/etc/NetworkManager/system-connections
-    local cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=( $(compgen -W "$(ls $CONNECTIONS_DIR)" -- $cur) )
+    local _COMPREPLY f filename cur
+    _COMPREPLY=()
+    for f in /etc/NetworkManager/system-connections/*
+    do
+        filename="$(basename "$f")"
+        # filter out the .nmconnection suffix to get the wifi network name
+        _COMPREPLY+=( "${filename%.*}" )
+    done
+    cur=${COMP_WORDS[COMP_CWORD]}
+    # set the field separator to \n since spaces could be in the network name,
+    # and [*] expansion will separate entries with \n
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "${_COMPREPLY[*]}" -- $cur) )
 }
 
 complete -o filenames -F _lookupwificompletion lookupwifi
